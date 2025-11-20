@@ -7,7 +7,7 @@ namespace HansCodeChallenge.VideoWebApp.Controllers
     [ApiController]
     public class VideosController : ControllerBase
     {
-        private static readonly string folderPath 
+        private static readonly string folderPath
             = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "videos");
 
         [HttpGet("list")]
@@ -69,5 +69,57 @@ namespace HansCodeChallenge.VideoWebApp.Controllers
             // For demonstration, we'll just return a success message
             return Ok(new { message = "Video uploaded successfully." });
         }
+
+        [HttpGet("stream/{fileName}")]
+        public IActionResult StreamAudio(string fileName)
+        {
+            var filePath = Path.Combine(folderPath, fileName);
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound("Video not found.");
+            }
+
+            var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+            return new FileStreamResult(fs, "video/mp4")
+            {
+                EnableRangeProcessing = true
+            };
+        }
+
+        [HttpGet("chunk/{fileName}")]
+        public IActionResult ChunkVideo(string fileName)
+        {
+            if (!Request.Headers.ContainsKey("Range"))
+                return BadRequest("Range header is missing.");
+
+            var filePath = Path.Combine(folderPath, fileName);
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound("Video not found.");
+            }
+
+            var fileLength = new FileInfo(filePath).Length;
+
+            var rangeHeader = Request.Headers["Range"].ToString();
+            var range = rangeHeader.Replace("bytes=", "").Split('-');
+            long start = long.Parse(range[0]);
+            long end = (range.Length > 1 && !string.IsNullOrEmpty(range[1]))
+                ? long.Parse(range[1])
+                : Math.Min(start + 1024 * 1024 - 1, fileLength - 1);
+
+            var contentLength = end - start + 1;
+
+            var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            fs.Seek(start, SeekOrigin.Begin);
+
+            Response.StatusCode = StatusCodes.Status206PartialContent;
+            Response.Headers.Append("Content-Range", $"bytes {start}-{end}/{fileLength}");
+            Response.Headers.Append("Accept-Ranges", "bytes");
+            Response.Headers.Append("Content-Length", contentLength.ToString());
+
+            return File(fs, "video/mp4", enableRangeProcessing: false);
+        }
+
     }
 }

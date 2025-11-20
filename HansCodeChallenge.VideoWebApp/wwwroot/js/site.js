@@ -1,11 +1,12 @@
 ﻿function fetchVideoList() {
     var videoList = $('#videoList');
-    
+
     $.get('api/videos/list', function (result) {
         console.log(result);
         videoList.empty();
         for (var i = 0; i < result.length; i++) {
-            var videoItem = $('<li></li>').text(result[i].title);
+            var videoItem = $('<li class="list-group-item" fileName="' + result[i].title + '"></li>').text(result[i].title);
+            videoItem.on('click', streamVideo);
             videoList.append(videoItem);
         }
     });
@@ -15,7 +16,7 @@ function uploadVideos() {
     var files = $('#fileInput')[0].files; // Get the selected files
 
     if (files.length > 0) {
-        
+
         var formData = new FormData();
         for (var i = 0; i < files.length; i++) {
             formData.append('videoFiles', files[i]); // Append each file to the FormData object
@@ -46,7 +47,7 @@ function uploadVideos() {
     }
 }
 
-function switchToTab(tabName) { 
+function switchToTab(tabName) {
     // Get the tab trigger element
     var uploadTab = document.querySelector('#' + tabName);
 
@@ -55,6 +56,18 @@ function switchToTab(tabName) {
 
     // Show the tab
     tab.show();
+}
+
+function streamVideo() {
+
+    var fileName = $(this).attr('fileName');
+    console.log(fileName);
+    const videoPlayer = document.getElementById('videoPlayer');
+    const videoSource = document.getElementById('videoSource');
+    videoSource.src = `api/videos/stream/${fileName}.mp4`;
+    //videoSource.src = `api/videos/chunk/${fileName}.mp4`;
+    videoPlayer.load();
+    videoPlayer.play();
 }
 
 $(function () {

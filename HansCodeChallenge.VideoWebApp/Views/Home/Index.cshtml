@@ -15,10 +15,14 @@
 		<!-- List Tab -->
 		<div class="tab-pane fade show active" id="list" role="tabpanel">
 			<h4>Uploaded Videos</h4>
+			<video id="videoPlayer" width="640" height="360" controls class="mb-3">
+				<source id="videoSource" type="video/mp4">
+				Your browser does not support the video tag.
+			</video>
+			<br />
 			<ul id="videoList" class="list-group">
 				<!-- Dynamically populated list items -->
-				<li class="list-group-item">SampleVideo1.mp4</li>
-				<li class="list-group-item">SampleVideo2.mp4</li>
+				<!-- <li class="list-group-item">SampleVideo1.mp4</li> -->
 			</ul>
 		</div>
 
