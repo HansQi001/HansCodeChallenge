@@ -1,4 +1,10 @@
 ﻿(function () {
+    listItemFormat = '{0} - {1} MB {2}';
+
+    function getListItemText(fileName, fileSize, status) {
+        return `${fileName} - ${fileSize} MB ${status || ''}`;
+    }
+
     function fetchVideoList() {
         var videoList = $('#videoList');
 
@@ -6,7 +12,10 @@
             console.log(result);
             videoList.empty();
             for (var i = 0; i < result.length; i++) {
-                var videoItem = $('<li class="list-group-item" fileName="' + result[i].title + '"></li>').text(result[i].title);
+                var videoItem = $(`<li class="list-group-item" 
+                fileName="${result[i].title}" 
+                fileSize="${result[i].size}"></li>`)
+                    .text(getListItemText(result[i].title, result[i].size));
                 videoItem.on('click', playVideo);
                 videoList.append(videoItem);
             }
@@ -129,8 +138,14 @@
     }
 
     function playVideo() {
+        $(this).siblings().removeClass('active').each(function () {
+            $(this).text(getListItemText($(this).attr('fileName'), $(this).attr('fileSize')));
+        });
+
+        $(this).addClass('active');
 
         var fileName = $(this).attr('fileName');
+        $(this).text(getListItemText($(this).attr('fileName'), $(this).attr('fileSize'), '(PLAYING)'));
 
         const videoPlayer = document.getElementById('videoPlayer');
         const videoSource = document.getElementById('videoSource');

@@ -35,9 +35,8 @@ namespace HansCodeChallenge.VideoWebApp.Controllers
 
             var videos = videoFiles?.Select((filePath, index) => new
             {
-                Id = index + 1,
                 Title = Path.GetFileNameWithoutExtension(filePath),
-                Url = $"/videos/{Path.GetFileName(filePath)}"
+                Size = (new FileInfo(filePath)).Length / (1024 * 1024),
             }).ToArray() ?? Array.Empty<object>();
 
             return Ok(videos);

@@ -11,10 +11,10 @@ namespace HansCodeChallenge.VideoWebApp
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            var defaultSize = 1L * 1024 * 1024 * 1024; // 1 GB
+            var defaultSize = 200 * 1024 * 1024; // 200 MB
 
             // Increase global multipart body length limit
-            // It doesn't mean the upload limit of all actions is 1 GB
+            // It doesn't mean the upload limit of all actions is 200 MB
             builder.Services.Configure<FormOptions>(options =>
             {
                 options.MultipartBodyLengthLimit = defaultSize;
