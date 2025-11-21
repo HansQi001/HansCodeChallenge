@@ -44,7 +44,7 @@ namespace HansCodeChallenge.VideoWebApp.Controllers
         }
 
         [HttpPost("upload")]
-        [RequestSizeLimit(200_000_000)] // Limit upload size to ~200MB
+        [RequestSizeLimit(200 * 1024 * 1024)] // Limit upload size to ~200MB
         public async Task<IActionResult> UploadVideo([FromForm] List<IFormFile> videoFiles)
         {
             if (videoFiles == null || videoFiles.Count == 0)

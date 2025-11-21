@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http.Features;
+
 namespace HansCodeChallenge.VideoWebApp
 {
     public class Program
@@ -8,6 +10,16 @@ namespace HansCodeChallenge.VideoWebApp
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            var defaultSize = 1L * 1024 * 1024 * 1024; // 1 GB
+
+            // Increase global multipart body length limit
+            // It doesn't mean the upload limit of all actions is 1 GB
+            builder.Services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = defaultSize;
+            });
+
 
             var app = builder.Build();
 

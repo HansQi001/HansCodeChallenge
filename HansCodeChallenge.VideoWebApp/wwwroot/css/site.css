@@ -20,3 +20,27 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+
+.progress-wrapper {
+    position: relative;
+    width: 100%; /* match your input width */
+    display: none;
+}
+
+#uploadProgress {
+    width: 100%; /* take full width of parent */
+    height: calc(2.25rem + 2px); /* match Bootstrap .form-control height */
+    margin-top: 0.5rem; /* small spacing below input */
+    display: block; /* ensure it behaves like a block element */
+}
+
+#uploadPercent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    color: black; /* or white if you want contrast */
+    pointer-events: none; /* allow clicks to pass through */
+}
