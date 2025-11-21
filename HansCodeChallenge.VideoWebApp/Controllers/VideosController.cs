@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace HansCodeChallenge.VideoWebApp.Controllers
 {
@@ -11,7 +10,7 @@ namespace HansCodeChallenge.VideoWebApp.Controllers
             = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "videos");
 
         [HttpGet("list")]
-        public async Task<IActionResult> GetVideoList()
+        public IActionResult GetVideoList()
         {
             if (!Directory.Exists(folderPath))
             {
