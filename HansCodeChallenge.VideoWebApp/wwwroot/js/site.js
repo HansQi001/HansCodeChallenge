@@ -64,8 +64,8 @@ function streamVideo() {
     console.log(fileName);
     const videoPlayer = document.getElementById('videoPlayer');
     const videoSource = document.getElementById('videoSource');
-    videoSource.src = `api/videos/stream/${fileName}.mp4`;
-    //videoSource.src = `api/videos/chunk/${fileName}.mp4`;
+    //videoSource.src = `api/videos/stream/${fileName}.mp4`;
+    videoSource.src = `api/videos/chunk/${fileName}.mp4`;
     videoPlayer.load();
     videoPlayer.play();
 }

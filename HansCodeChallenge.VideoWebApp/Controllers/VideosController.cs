@@ -52,22 +52,41 @@ namespace HansCodeChallenge.VideoWebApp.Controllers
                 return BadRequest("No file uploaded.");
             }
 
-            if (videoFiles.Any(f => !f.FileName.EndsWith("mp4")))
+            if (videoFiles.Any(f => !f.ContentType.Equals("video/mp4")))
             {
                 return BadRequest("Invalid file type. Only .mp4 files are allowed.");
             }
             // Save the file to a storage location
             foreach (var file in videoFiles)
             {
-                var filePath = Path.Combine(folderPath, file.FileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                // avoid to save the file with name like "../../file.mp4" into unexpected location
+                var safeFileName = Path.GetFileName(file.FileName);
+
+                var filePath = Path.Combine(folderPath, safeFileName);
+
+                try
                 {
-                    await file.CopyToAsync(stream);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, $"Got an error when saving the file {safeFileName}, error: {ex.Message}");
                 }
             }
 
-            // For demonstration, we'll just return a success message
-            return Ok(new { message = "Video uploaded successfully." });
+            // return success message and saved files' names
+            return Ok(new
+            {
+                message = "Video uploaded successfully.",
+                files = videoFiles.Select(f => new
+                {
+                    name = Path.GetFileName(f.FileName),
+                    size = f.Length
+                })
+            });
         }
 
         [HttpGet("stream/{fileName}")]
